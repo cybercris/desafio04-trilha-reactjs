@@ -5,7 +5,15 @@ import api from '../../services/api';
 
 import { Container } from './styles';
 
-export function Food({ food, handleEditFood, handleDelete }) {
+import { Food as FoodData } from '../../types';
+
+interface FoodProps {
+  food: FoodData;
+  handleEditFood: (food: FoodData) => void;
+  handleDelete: (id: number) => void;
+}
+
+export function Food({ food, handleEditFood, handleDelete }: FoodProps) {
   const [isAvailable, setIsAvailable] = useState(food?.available);
 
   async function toggleAvailable() {

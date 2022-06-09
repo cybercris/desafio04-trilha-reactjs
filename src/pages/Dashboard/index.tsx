@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import { Header } from '../../components/Header';
-import { Food } from '../../components/Food';
+import { Food as FoodCard } from '../../components/Food';
 import { ModalAddFood } from '../../components/ModalAddFood';
 import { ModalEditFood } from '../../components/ModalEditFood';
 
@@ -9,9 +9,11 @@ import api from '../../services/api';
 
 import { FoodsContainer } from './styles';
 
+import { Food } from '../../types';
+
 export function Dashboard() {
-  const [foods, setFoods] = useState([]);
-  const [editingFood, setEditingFood] = useState({});
+  const [foods, setFoods] = useState<Food[]>([]);
+  const [editingFood, setEditingFood] = useState<Food>({} as Food);
   const [modalOpen, setModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
 
@@ -24,7 +26,7 @@ export function Dashboard() {
     getFoods();
   }, []);
 
-  async function handleAddFood(food) {
+  async function handleAddFood(food: Omit<Food, "id" | "available">) {
     try {
       const response = await api.post('/foods', {
         ...food,
@@ -37,7 +39,7 @@ export function Dashboard() {
     }
   }
 
-  async function handleUpdateFood(food) {
+  async function handleUpdateFood(food: Omit<Food, "id" | "available">) {
     try {
       const foodUpdated = await api.put(
         `/foods/${editingFood.id}`,
@@ -54,7 +56,7 @@ export function Dashboard() {
     }
   }
 
-  async function handleDeleteFood(id) {
+  async function handleDeleteFood(id: number) {
     await api.delete(`/foods/${id}`);
 
     const foodsFiltered = foods.filter(food => food.id !== id);
@@ -70,7 +72,7 @@ export function Dashboard() {
     setEditModalOpen(oldState => !oldState);
   }
 
-  function handleEditFood(food) {
+  function handleEditFood(food: Food) {
     setEditingFood(food);
     setEditModalOpen(true);
   }
@@ -93,7 +95,7 @@ export function Dashboard() {
       <FoodsContainer data-testid="foods-list">
         {foods &&
           foods.map(food => (
-            <Food
+            <FoodCard
               key={food.id}
               food={food}
               handleDelete={handleDeleteFood}
